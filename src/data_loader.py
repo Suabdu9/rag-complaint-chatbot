@@ -1,20 +1,13 @@
+import pyarrow.parquet as pq
 import pandas as pd
 
-from pathlib import Path
 
+def load_batch(path, columns=None):
 
-def load_embeddings(path):
+    pf = pq.ParquetFile(path)
 
-    df = pd.read_parquet(path)
+    table = pf.read(columns=columns)
 
-    metadata = pd.json_normalize(df["metadata"])
-
-    df = pd.concat(
-        [
-            df.drop(columns=["metadata"]),
-            metadata
-        ],
-        axis=1
-    )
+    df = table.to_pandas()
 
     return df
